@@ -6,11 +6,11 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 
 @RestController
 @RequestMapping("/player")
@@ -34,13 +34,41 @@ class PlayerController(
     // POST
     @PostMapping
     fun postNewPlayer(@RequestBody player: Player): ResponseEntity<String> {
-
         playerRepository.save(player)
 
         return ResponseEntity.status(201).body("Player Created")
     }
 
     // PUT
+    @PutMapping
+    fun putPlayerByPlayerId(@RequestParam("id") id: Long, @RequestBody player: Player): ResponseEntity<String> {
+        val foundPlayerOptional = playerRepository.findById(id)
+
+        if (foundPlayerOptional.isPresent) {
+            val foundPlayer = foundPlayerOptional.get()
+
+            if (player.username.isNotEmpty()) {
+                foundPlayer.username = player.username
+            }
+
+            if (player.password.isNotEmpty()) {
+                foundPlayer.password = player.password
+            }
+
+            if (player.score > 0) {
+                foundPlayer.score = player.score
+            }
+
+            foundPlayer.isPro = player.isPro
+
+
+            playerRepository.save(foundPlayer)
+
+            return ResponseEntity.status(200).body("Player Updated")
+        }
+
+        return ResponseEntity.notFound().build()
+    }
 
     // DELETE
     @DeleteMapping

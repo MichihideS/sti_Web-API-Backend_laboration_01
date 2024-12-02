@@ -7,10 +7,10 @@ import jakarta.persistence.Id
 
 @Entity
 class Player(
-    val username: String = "",
-    val password: String = "",
-    val score: Int = 0,
-    val isPro: Boolean = true,
+    var username: String = "",
+    var password: String = "",
+    var score: Int = 0,
+    var isPro: Boolean = true,
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
